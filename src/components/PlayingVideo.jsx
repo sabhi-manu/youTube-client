@@ -2,7 +2,7 @@ import React from 'react'
 
 const PlayingVideo = () => {
   return (
-    <div>PlayingVideo</div>
+    <div className='mt-25'>PlayingVideo</div>
   )
 }
 

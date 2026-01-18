@@ -18,7 +18,7 @@ export default function AuthProvider({ children }) {
       gl: "US",
     });
         // console.log("API RESPONSE ===>", res.contents); 
-    // setData(res.contents);
+    setData(res.contents);
     setLoading(false)
   } catch (err) {
     console.error("Failed to fetch data");

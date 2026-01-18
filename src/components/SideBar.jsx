@@ -157,7 +157,7 @@ const SideBar = () => {
   ];
 
   return (
-    <div className="w-64 h-[calc(100vh-6rem)] overflow-y-scroll overflow-x-hidden  px-2 py-4 mt-16 ">
+    <div className="w-64 h-[calc(100vh-6rem)] overflow-y-scroll overflow-x-hidden  px-2 py-4  ">
       {/* home part */}
       {sidebarItems.map((item)=>{
         return  <div key={item.id} className="flex items-center gap-4 px-4 py-2 rounded-xl hover:bg-gray-300 cursor-pointer transition duration-200">

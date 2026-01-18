@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const baseUrl = "https://youtube138.p.rapidapi.com"
+// const baseUrl = "https://youtube138.p.rapidapi.com"
 const options = {
 	method: 'GET',
 	headers: {
@@ -12,8 +12,8 @@ const options = {
 
 export const fetchData = async(url,params = {})=>{
     try {
-        const {data} = await axios.get(`${baseUrl}/${url}`,{  ...options,
-      params,})
+    //     const {data} = await axios.get(`${baseUrl}/${url}`,{  ...options,
+    //   params,})
         return data
     } catch (error) {
         console.log("error fetching api data.===>",error)

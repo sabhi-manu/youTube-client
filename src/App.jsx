@@ -10,6 +10,7 @@ import Following from "./pages/profile/Following";
 import Tweets from "./pages/profile/Tweets";
 import PlayListTab from "./pages/profile/PlayListTab";
 import AppLayout from "./layouts/AppLayout";
+import Dashboard from "./pages/Dashboard";
 
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
       <Routes>
         {/* Routes WITHOUT sidebar */}
           <Route path="/video/:videoId" element={<PlayingVideo />} />
+          <Route path="/dashboard" element={<Dashboard/>} />
 
         {/* Routes WITH sidebar */}
         <Route element={<AppLayout />}>

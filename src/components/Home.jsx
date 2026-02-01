@@ -5,14 +5,14 @@ import Video from './Video';
 import youtubeDummyData from './dummyData.js';
 
 const Home = () => {
-  // const {data} = useAuth()
+  // const {data,loading} = useAuth()
   console.log(youtubeDummyData)
   return (
-    <div className=' flex mt-15 '>
-      <SideBar />
+    <div className=' flex mt-1 '>
+      {/* <SideBar /> */}
       <div className='h-[calc(100vh-6rem)] overflow-y-scroll overflow-x-hidden'>
         <div className=' grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4  gap-3  p-5 '>
-          {
+          { 
             youtubeDummyData?.map((item) => {
               if (item.type !== "video") return false
 
@@ -22,7 +22,7 @@ const Home = () => {
               )
 
             })
-          }
+          }        
         </div>
       </div>
     </div>

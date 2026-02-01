@@ -44,7 +44,7 @@ const Video = ({ video }) => {
                 video?.stats?.views,
                 2
               )} views`}</span>
-              <span className="flex text-[24px] leading-none font-bold relative top-[-10px] mx-1">
+              <span className="flex text-[24px] leading-none font-bold relative -top-2.5 mx-1">
                 .
               </span>
               <span>{video?.publishedTimeText}</span>

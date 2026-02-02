@@ -11,12 +11,16 @@ import Tweets from "./pages/profile/Tweets";
 import PlayListTab from "./pages/profile/PlayListTab";
 import AppLayout from "./layouts/AppLayout";
 import Dashboard from "./pages/Dashboard";
+import AuthLayout from "./layouts/AuthLayout";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+// import FooterBar from "./components/FooterBar";
 
 
 const App = () => {
   return (
     <div  >
-      <NavBar />
+      {/* <NavBar /> */}
 
       <Routes>
         {/* Routes WITHOUT sidebar */}
@@ -37,7 +41,13 @@ const App = () => {
             <Route path="following" element={<Following />} />
           </Route>
         </Route>
+
+          <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Route>
       </Routes>
+      {/* <FooterBar/> */}
     </div>
   );
 };

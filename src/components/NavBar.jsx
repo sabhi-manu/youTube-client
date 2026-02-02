@@ -9,10 +9,10 @@ import { CiBellOn } from "react-icons/ci";
 const NavBar = () => {
     let user = "";
     return (
-        <div className="flex justify-between items-center gap-3 border px-6 py-3 bg-white fixed w-full top-0 relative z-10 " >
+        <div className="flex justify-between items-center gap-3  px-6 py-3 bg-white fixed w-full top-0 relative z-10 " >
             {/* logo part */}
             <div className=" flex justify-between items-center gap-x-2">
-                <GiHamburgerMenu className="cursor-pointer  " size={22} />
+                {/* <GiHamburgerMenu className="cursor-pointer  " size={22} /> */}
                 <img
                     className="h-10 cursor-pointer  "
                     src={logo}

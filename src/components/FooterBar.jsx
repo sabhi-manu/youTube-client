@@ -19,6 +19,10 @@ const FooterBar = () => {
         <User size={20} />
         Profile
       </NavLink>
+      <NavLink to="/profile/history" className="flex flex-col items-center text-xs">
+        <User size={20} />
+        History
+      </NavLink>
 
     </div>
   );

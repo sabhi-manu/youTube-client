@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import AuthLayout from "./layouts/AuthLayout";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import UploadVideoForm from "./pages/components/UploadVideoForm";
 // import FooterBar from "./components/FooterBar";
 
 
@@ -26,7 +27,7 @@ const App = () => {
         {/* Routes WITHOUT sidebar */}
           <Route path="/video/:videoId" element={<PlayingVideo />} />
           <Route path="/dashboard" element={<Dashboard/>} />
-
+          <Route path="/video/upload" element={<UploadVideoForm/>} />
         {/* Routes WITH sidebar */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />

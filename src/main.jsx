@@ -4,14 +4,19 @@ import './index.css'
 import App from './App.jsx'
 import AuthProvider from './context/AuthProvider.jsx'
 import { BrowserRouter } from 'react-router'
-import {ToastContainer} from "react-toastify"
+import { ToastContainer } from "react-toastify"
+import { Provider } from 'react-redux'
+import store from './store/store.js'
 
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
-<AuthProvider>
-    <App />
-<ToastContainer />
-</AuthProvider>
+    <Provider store={store}>
+
+        <AuthProvider>
+            <App />
+            <ToastContainer />
+        </AuthProvider>
+    </Provider>
     </BrowserRouter>
- 
+
 )

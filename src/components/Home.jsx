@@ -1,11 +1,11 @@
-import React from 'react'
-import SideBar from './SideBar'
-import { useAuth } from '../context/AuthProvider.jsx'
+
+import { useSelector } from 'react-redux';
 import Video from './Video';
 import youtubeDummyData from './dummyData.js';
 
 const Home = () => {
-  // const {data,loading} = useAuth()
+  const {user} = useSelector((state)=>state.auth)
+  console.log("user data ==>",user)
   console.log(youtubeDummyData)
   return (
     <div className=' flex mt-1 '>

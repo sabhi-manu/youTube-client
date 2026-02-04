@@ -1,24 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import { loginApi } from "../../api/auth.api";
+import { loginUser, setAuthError } from "../../features/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      console.log(data);
+      let response = await loginApi(data);
+      console.log("response of login user ===>", response?.data.data);
+      dispatch(loginUser(response.data.data));
+      navigate("/");
+      toast.success("Registration successful 🎉");
+    } catch (error) {
+      console.log("error in register ===>", error);
+      toast.error("Registration failed ❌");
+      dispatch(setAuthError("Invalid credentials"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex">
-
       {/* Form Section */}
       <div className="w-full md:w-1/2 flex flex-col justify-center px-10">
-
         {/* Heading */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Welcome Back 👋</h1>
@@ -28,32 +47,45 @@ const Login = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 max-w-md">
-
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-4 max-w-md"
+        >
           {/* Username or Email */}
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Username or Email
-            </label>
+            <label className="block text-sm font-medium mb-1">Username</label>
             <input
-              {...register("identifier", {
-                required: "Username or Email is required",
+              {...register("userName", {
+                required: "Username  is required",
               })}
-              placeholder="Enter username or email"
+              placeholder="Enter username "
               className="border p-2 rounded w-full"
             />
-            {errors.identifier && (
+            {errors.userName && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.identifier.message}
+                {errors.userName.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Email</label>
+            <input
+              {...register("email", {
+                required: " Email is required",
+              })}
+              placeholder="Enter  email"
+              className="border p-2 rounded w-full"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
               </p>
             )}
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
               {...register("password", {
@@ -72,19 +104,25 @@ const Login = () => {
           {/* Button */}
           <button
             type="submit"
-            className="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded mt-2"
+            disabled={loading}
+            className={`py-2 rounded mt-2 text-white transition
+                                ${
+                                  loading
+                                    ? "bg-purple-400 cursor-not-allowed"
+                                    : "bg-purple-600 hover:bg-purple-700"
+                                }`}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
 
           {/* Footer */}
-          <Link to={"/register"} >
-          <p className="text-sm text-gray-500 mt-4">
-            Don’t have an account?{" "}
-            <span className="text-purple-600 cursor-pointer hover:underline">
-              Register
-            </span>
-          </p>
+          <Link to={"/register"}>
+            <p className="text-sm text-gray-500 mt-4">
+              Don’t have an account?{" "}
+              <span className="text-purple-600 cursor-pointer hover:underline">
+                Register
+              </span>
+            </p>
           </Link>
         </form>
       </div>

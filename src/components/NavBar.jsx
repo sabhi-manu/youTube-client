@@ -5,9 +5,12 @@ import { CiSearch } from "react-icons/ci";
 import { FaMicrophone } from "react-icons/fa";
 import { CiVideoOn } from "react-icons/ci";
 import { CiBellOn } from "react-icons/ci";
+import { useSelector } from "react-redux";
 
 const NavBar = () => {
-    let user = "";
+    const {user}= useSelector((state)=>state.auth)
+    console.log("user detatis in nav bar ==>",user)
+    // let user = "";
     return (
         <div className="flex justify-between items-center gap-3  px-6 py-3 bg-white fixed w-full top-0 relative z-10 " >
             {/* logo part */}
@@ -51,9 +54,9 @@ const NavBar = () => {
                 </button>
 
                 <div className="cursor-pointer">
-                    {user?.photo ? (
+                    {user?.avatar ? (
                         <img
-                            src={user.photo}
+                            src={user.avatar}
                             alt="profile"
                             className="w-9 h-9 rounded-full object-cover hover:ring-2 hover:ring-gray-300 transition"
                         />

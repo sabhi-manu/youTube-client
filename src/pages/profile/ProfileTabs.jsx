@@ -1,4 +1,4 @@
-import { NavLink, useParams } from "react-router";
+import { NavLink } from "react-router";
 
 
 const tabs = [
@@ -9,14 +9,14 @@ const tabs = [
 ];
 
 const ProfileTabs = () => {
-  const { userId } = useParams();
+ 
 
   return (
     <div className="flex  gap-6 border-b px-4 mt-5 ">
       {tabs.map(tab => (
         <NavLink
           key={tab.label}
-          to={`/profile/${userId}/${tab.path}`}
+          to={tab.path} 
           end={tab.path === ""}
           className={({ isActive }) =>
             `pb-3 text-sm font-medium text-center mb-1 px-4 py-2 w-[15%] ${

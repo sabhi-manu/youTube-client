@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { updateProfileApi } from "../../api/user.api";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { loginUser } from "../../features/authSlice";
 
 const EditDetails = () => {
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
     });
-
+  const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -30,21 +34,18 @@ const EditDetails = () => {
             return setError("Email is required");
         }
 
-        if (!/\S+@\S+\.\S+/.test(email)) {
-            return setError("Enter a valid email");
-        }
+       
 
         try {
             setLoading(true);
+            let response = await updateProfileApi(formData)
 
-            // 🔹 API call (example)
-            // await api.put("/users/update-profile", formData);
-
-            console.log("Submitting data:", formData);
-
-            alert("Profile updated successfully!");
+            console.log("response data===>",response)
+              dispatch(loginUser(response.data.data));
+            toast.success("Registration successful 🎉");
         } catch (err) {
             setError("Something went wrong. Please try again.");
+            toast.error("Registration failed ❌");
         } finally {
             setLoading(false);
         }

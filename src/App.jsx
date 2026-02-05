@@ -25,7 +25,6 @@ const App = () => {
 
       <Routes>
         {/* Routes WITHOUT sidebar */}
-          <Route path="/video/:videoId" element={<PlayingVideo />} />
           <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/video/upload" element={<UploadVideoForm/>} />
         {/* Routes WITH sidebar */}
@@ -33,8 +32,9 @@ const App = () => {
           <Route path="/" element={<Home />} />
         <Route path="/search/:searchQuery" element={<Search />} />
           <Route path="/playlist/:playlistId" element={<PlayListTab />} />
+          <Route path="/video/:videoId" element={<PlayingVideo />} />
 
-          <Route path="/profile/:userId" element={<ProfileLayout />}>
+          <Route path="/profile/:username/:userId" element={<ProfileLayout />}>
             <Route index element={<Videos />} />
             <Route path="videos" element={<Videos />} />
             <Route path="playlist" element={<Playlist />} />

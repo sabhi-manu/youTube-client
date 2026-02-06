@@ -24,7 +24,7 @@ function SuggestedVideo({ video }) {
               {video?.title}
             </span>
             <span className="text-[12px] lg:text-[10px] xl:text-[12px] font-semibold mt-2  flex items-center">
-              {video?.owner?.fullName.toUpperCase()}
+              {video?.owner?.fullName}
               {video?.isPublished  && (
                 <BsFillCheckCircleFill className=" text-[12px] lg:text-[10px] xl:text-[12px] ml-1" />
               )}

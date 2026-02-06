@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { changePasswordApi } from "../../api/user.api";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../features/authSlice";
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
     oldPassword: "",
     newPassword: "",
   });
-
+ const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,10 +30,6 @@ const ChangePassword = () => {
       return setError("Both fields are required");
     }
 
-    if (newPassword.length < 8) {
-      return setError("New password must be at least 8 characters");
-    }
-
     if (oldPassword === newPassword) {
       return setError("New password must be different from old password");
     }
@@ -37,14 +37,14 @@ const ChangePassword = () => {
     try {
       setLoading(true);
 
-      // 🔹 API call (example)
-      // await api.put("/users/change-password", formData);
+     let response = await changePasswordApi(formData)
 
-      console.log("Changing password:", formData);
-
-      alert("Password updated successfully!");
+ console.log("response data===>",response)
+       dispatch(loginUser(response.data.data));
+       toast.success("Password update successful 🎉");
     } catch (err) {
       setError("Failed to update password. Please try again.");
+      toast.error(" Failed to update  ❌");
     } finally {
       setLoading(false);
     }

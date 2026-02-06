@@ -1,64 +1,42 @@
 import { useParams } from "react-router";
 import SuggestedVideo from "../../components/SuggestedVideo";
-
-
-const dummySuggestedVideos = [
-  {
-    videoId: "a1b2c3",
-    title: "React Full Course in Hindi 🔥",
-    thumbnails: [{ url: "https://picsum.photos/300/200?random=2" }],
-    lengthSeconds: 3600,
-    author: {
-      title: "Frontend Factory",
-      badges: [{ type: "VERIFIED_CHANNEL" }],
-    },
-    stats: { views: 950000 },
-    publishedTimeText: "1 month ago",
-  },
-  {
-    videoId: "d4e5f6",
-    title: "Redux Toolkit Crash Course",
-    thumbnails: [{ url: "https://picsum.photos/300/200?random=3" }],
-    lengthSeconds: 1800,
-    author: {
-      title: "JS Mastery",
-      badges: [{ type: "VERIFIED_CHANNEL" }],
-    },
-    stats: { views: 720000 },
-    publishedTimeText: "3 weeks ago",
-  },
-  {
-    videoId: "d4e5f6",
-    title: "Redux Toolkit Crash Course",
-    thumbnails: [{ url: "https://picsum.photos/300/200?random=3" }],
-    lengthSeconds: 1800,
-    author: {
-      title: "JS Mastery",
-      badges: [{ type: "VERIFIED_CHANNEL" }],
-    },
-    stats: { views: 720000 },
-    publishedTimeText: "3 weeks ago",
-  },
-];
-
+import { useEffect, useState } from "react";
+import { getUserVideo } from "../../api/videoApi/getVideosApi";
 
 const Videos = () => {
   const { userId } = useParams();
- let isLoading = false
- let isError = false
 
+  const [videos, setVideos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
+  useEffect(() => {
+    const fetchUserVideo = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getUserVideo(userId);
+        setVideos(response.data.data);
+      } catch (error) {
+        console.log("error to get the response", error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserVideo();
+  }, [userId]);
 
   if (isLoading) return <div className="p-4">Loading videos...</div>;
   if (isError) return <div className="p-4">Failed to load videos</div>;
 
-  if (!dummySuggestedVideos.length ) {
+  if (!videos.length) {
     return <div className="p-4">No videos yet</div>;
   }
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      {dummySuggestedVideos.map(video => (
+      {videos.map(video => (
         <SuggestedVideo key={video._id} video={video} />
       ))}
     </div>

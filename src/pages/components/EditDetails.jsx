@@ -42,10 +42,10 @@ const EditDetails = () => {
 
             console.log("response data===>",response)
               dispatch(loginUser(response.data.data));
-            toast.success("Registration successful 🎉");
+            toast.success("Details update successful 🎉");
         } catch (err) {
             setError("Something went wrong. Please try again.");
-            toast.error("Registration failed ❌");
+            toast.error(" Failed to update details ❌");
         } finally {
             setLoading(false);
         }

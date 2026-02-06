@@ -31,7 +31,7 @@ if (loading) return <p>Loading profile...</p>;
     
   
        <div className='w-full px-3 py-2 h-[calc(100vh-6rem)] overflow-y-scroll overflow-x-hidden '>
-         <ProfileHeader profile={profile} isOwner={isOwner} />
+         <ProfileHeader profile={profile} setProfile={setProfile} isOwner={isOwner} userId={userId} />
          <ProfileTabs/>
          <Outlet/>
        </div>

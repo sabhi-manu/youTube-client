@@ -2,11 +2,35 @@ import { useParams } from "react-router";
 import EditProfileModal from "../EditProfileModal";
 import { useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
+import { toast } from "react-toastify";
+import { subscriptionToggleApi } from "../../api/subscriptionApi/subscription";
 
-const ProfileHeader = ({ profile, isOwner }) => {
+const ProfileHeader = ({ profile, setProfile, isOwner,userId }) => {
   const [activeEdit, setActiveEdit] = useState(null);
   const [editOpt, setEditOpt] = useState(false);
 
+  const handleSubscription = async(userId)=>{
+    try {
+      const response = await subscriptionToggleApi(userId)
+      console.log("subscription response ==>",response)
+      
+      const isSubscribed = response.data.success;
+
+      setProfile(prev => ({
+        ...prev,
+       isSubscribe: isSubscribed,
+        subscribersCount: isSubscribed
+          ? prev.subscribersCount + 1
+          : prev.subscribersCount - 1
+      }));
+      toast.success(
+        isSubscribed ? "Subscribed successfully" : "Unsubscribed successfully"
+      );
+    } catch (error) {
+      console.log("error in subscription ==>",error)
+      toast.error("internal server error.")
+    }
+  }
   return (
     <div className="w-full">
       {/* Cover */}
@@ -98,14 +122,14 @@ const ProfileHeader = ({ profile, isOwner }) => {
             ) : (
               <button
                 className={`px-5 py-2 rounded font-medium transition ${
-                  profile.isSubscribed
+                  profile.isSubscribe
                     ? "bg-gray-300 text-black hover:bg-gray-400"
                     : "bg-red-600 text-white hover:bg-red-700"
                 }`}
                 onClick={() => {
-                  // later: call subscribe / unsubscribe API
+                 handleSubscription(userId)
                   console.log(
-                    profile.isSubscribed ? "Unsubscribe" : "Subscribe",
+                   profile.isSubscribe? "Unsubscribe" : "Subscribe",
                   );
                 }}
               >

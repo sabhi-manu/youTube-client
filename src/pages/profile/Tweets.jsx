@@ -1,118 +1,149 @@
-import React from 'react'
-
-
-export const tweetsMock = [
-  {
-    id: "tweet_1",
-    owner: {
-      userName: "manu_dev",
-      avatar: "https://i.pravatar.cc/150?img=12",
-    },
-    content: "Just finished building Profile Tabs with React Router. Layouts are 🔥",
-    likes: 128,
-    createdAt: "2025-01-20T10:15:00Z",
-  },
-  {
-    id: "tweet_2",
-    owner: {
-      userName: "js_mastery",
-      avatar: "https://i.pravatar.cc/150?img=32",
-    },
-    content: "Redux Toolkit > plain Redux. Cleaner code, less pain.",
-    likes: 542,
-    createdAt: "2025-01-18T14:40:00Z",
-  },
-  {
-    id: "tweet_3",
-    owner: {
-      userName: "react_daily",
-      avatar: "https://i.pravatar.cc/150?img=45",
-    },
-    content: "If you’re not using layouts in React Router, you’re missing out.",
-    likes: 311,
-    createdAt: "2025-01-16T09:05:00Z",
-  },
-  {
-    id: "tweet_4",
-    owner: {
-      userName: "frontend_freak",
-      avatar: "https://i.pravatar.cc/150?img=56",
-    },
-    content: "Tailwind + React = productivity on steroids 🚀",
-    likes: 879,
-    createdAt: "2025-01-14T18:22:00Z",
-  },
-  {
-    id: "tweet_5",
-    owner: {
-      userName: "code_with_fun",
-      avatar: "https://i.pravatar.cc/150?img=64",
-    },
-    content: "Debugging UI issues at 2 AM hits different 😵‍💫",
-    likes: 96,
-    createdAt: "2025-01-12T23:10:00Z",
-  },
-];
-
-
+import React, { useEffect, useState } from "react";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { getUserTweetsApi, createTweetApi } from "../../api/tweetsApi/tweetsApi";
+import { useParams } from "react-router";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const Tweets = () => {
+  const { userId } = useParams();
+const loggedInUserId = useSelector(
+  (state) => state.auth.user?._id
+);
+
+const isOwnProfile = loggedInUserId === userId;
+console.log('check the owner profile==>',isOwnProfile)
+  const [tweets, setTweets] = useState([]);
+  const [content, setContent] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPosting, setIsPosting] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+ 
+  useEffect(() => {
+    const fetchTweets = async () => {
+      try {
+        setIsLoading(true);
+        setIsError(false);
+
+        const response = await getUserTweetsApi(userId);
+        setTweets(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching tweets:", error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (userId) fetchTweets();
+  }, [userId]);
+
+  // 🔹 Create tweet
+  const handleAddTweet = async () => {
+    if (!content.trim()) return;
+
+    try {
+      setIsPosting(true);
+
+      const response = await createTweetApi({ content });
+
+      // Optimistic UI update
+      setTweets((prev) => [response.data.data, ...prev]);
+      setContent("");
+
+      toast.success("Tweet posted");
+    } catch (error) {
+      console.error("Error creating tweet:", error);
+      toast.error("Failed to post tweet");
+    } finally {
+      setIsPosting(false);
+    }
+  };
+
+  // 🔹 States
+  if (isLoading) {
+    return <div className="p-4 text-center">Loading tweets...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div className="p-4 text-center text-red-500">
+        Failed to load tweets
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto">
-      {/* Add Tweet Box */}
-      <div className="border rounded-lg p-4 mb-6">
-        <input
-          className="w-full border rounded px-3 py-2 mb-2"
-          type="text"
-          placeholder="Add tweet..."
+      {/* Add Tweet */}
+      {
+        isOwnProfile &&
+        <div className="border rounded-lg p-4 mb-6">
+        <textarea
+          className="w-full border rounded px-3 py-2 mb-2 resize-none"
+          placeholder="What’s happening?"
+          rows={3}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
         />
-        <button className="px-4 py-1 bg-black text-white rounded">
-          Add
+        <button
+          onClick={handleAddTweet}
+          disabled={isPosting || !content.trim()}
+          className="px-4 py-1 bg-black text-white rounded disabled:opacity-50"
+        >
+          {isPosting ? "Posting..." : "Add"}
         </button>
       </div>
+      }
 
       {/* Tweets List */}
-      <div className="flex flex-col gap-5">
-        {tweetsMock.map((item) => (
-          <div
-            key={item.id}
-            className="flex gap-4 border-b pb-4"
-          >
-            {/* Avatar */}
-            <div className="h-12 w-12 rounded-full overflow-hidden">
-              <img
-                className="w-full h-full object-cover"
-                src={item.owner.avatar}
-                alt="avatar"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="flex-1">
-              <div className="flex items-center gap-2 text-sm">
-                <span className="font-semibold">
-                  {item.owner.userName}
-                </span>
-                <span className="text-gray-500">
-                  {new Date(item.createdAt).toLocaleDateString()}
-                </span>
+      {!tweets.length ? (
+        <div className="p-4 text-center text-gray-400">
+          No tweets yet
+        </div>
+      ) : (
+        <div className="flex flex-col gap-5">
+          {tweets.map((tweet) => (
+            <div key={tweet._id} className="flex gap-4 border-b pb-4">
+              {/* Avatar */}
+              <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-200">
+                <img
+                  src={tweet.owner?.avatar}
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                />
               </div>
 
-              <p className="mt-1 text-gray-800">
-                {item.content}
-              </p>
+              {/* Content */}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="font-semibold">
+                    {tweet.owner?.userName}
+                  </span>
+                  <span className="text-gray-500">
+                    {new Date(tweet.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
 
-              <div className="mt-2 text-sm text-gray-500">
-                 {item.likes}
+                <p className="mt-1 text-gray-800">{tweet.content}</p>
+
+                {/* Likes (UI only for now) */}
+                <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                  {tweet.isLiked ? (
+                    <AiFillLike />
+                  ) : (
+                    <AiOutlineLike />
+                  )}
+                  <span>{tweet.likeCount}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-
-
-export default Tweets
+export default Tweets;

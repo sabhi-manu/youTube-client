@@ -1,10 +1,14 @@
 import { useState } from "react";
+import { updateCoverImageApi } from "../../api/user.api";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { loginUser } from "../../features/authSlice";
 
 const ChangeCoverImage = () => {
   const [coverImage, setCoverImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+const dispatch = useDispatch();
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setError("");
@@ -16,9 +20,9 @@ const ChangeCoverImage = () => {
       return setError("Please select a valid image file");
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      return setError("Cover image must be less than 5MB");
-    }
+    // if (file.size > 5 * 1024 * 1024) {
+    //   return setError("Cover image must be less than 5MB");
+    // }
 
     setCoverImage(file);
   };
@@ -34,14 +38,14 @@ const ChangeCoverImage = () => {
       const formData = new FormData();
       formData.append("coverImage", coverImage);
 
-      // 🔹 API call (example)
-      // await api.put("/users/change-cover", formData);
-
-      console.log("Uploading cover image:", coverImage);
-
-      alert("Cover image updated successfully!");
+      let response = await updateCoverImageApi(formData)
+      
+                  console.log("response data===>",response)
+                    dispatch(loginUser(response.data.data));
+                  toast.success("Cover image Update successful 🎉");
     } catch (err) {
       setError("Failed to upload cover image");
+        toast.error(" Failed to update Cover Image  ❌");
     } finally {
       setLoading(false);
     }

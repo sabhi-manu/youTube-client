@@ -1,10 +1,14 @@
 import { useState } from "react";
+import { updateAvatarApi } from "../../api/user.api";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { loginUser } from "../../features/authSlice";
 
 const ChangeAvatar = () => {
   const [avatar, setAvatar] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const dispatch = useDispatch();
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setError("");
@@ -16,9 +20,9 @@ const ChangeAvatar = () => {
       return setError("Please select a valid image file");
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      return setError("Image size must be less than 2MB");
-    }
+    // if (file.size > 2 * 1024 * 1024) {
+    //   return setError("Image size must be less than 2MB");
+    // }
 
     setAvatar(file);
   };
@@ -33,15 +37,14 @@ const ChangeAvatar = () => {
 
       const formData = new FormData();
       formData.append("avatar", avatar);
+let response = await updateAvatarApi(formData)
 
-      // 🔹 API call (example)
-      // await api.put("/users/change-avatar", formData);
-
-      console.log("Uploading avatar:", avatar);
-
-      alert("Avatar updated successfully!");
+            console.log("response data===>",response)
+              dispatch(loginUser(response.data.data));
+            toast.success("avatar Update successful 🎉");
     } catch (err) {
       setError("Failed to upload avatar");
+         toast.error(" Failed to update avatar ❌");
     } finally {
       setLoading(false);
     }

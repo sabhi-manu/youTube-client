@@ -24,10 +24,10 @@ const Login = () => {
       console.log("response of login user ===>", response?.data.data);
       dispatch(loginUser(response.data.data));
       navigate("/");
-      toast.success("Registration successful 🎉");
+      toast.success("Login successful 🎉");
     } catch (error) {
       console.log("error in register ===>", error);
-      toast.error("Registration failed ❌");
+      toast.error("Login failed ❌");
       dispatch(setAuthError("Invalid credentials"));
     } finally {
       setLoading(false);

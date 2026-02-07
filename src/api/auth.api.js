@@ -21,3 +21,7 @@ export const logoutApi = async () => {
     },
   );
 };
+
+export const currentUserApi = ()=>{
+  return axiosInstance.get("/user/curret_user")
+}

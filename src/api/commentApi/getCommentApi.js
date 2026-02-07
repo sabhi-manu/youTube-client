@@ -6,3 +6,7 @@ export const getCommentApi = (videoId)=>{
 export const createCommentApi = (videoId,content)=>{
     return axiosInstance.post(`/comment/${videoId}`,{content})
 }
+
+export const toggleVideoLikeApi = (videoId)=>{
+    return axiosInstance.post(`/like/toggle/v/${videoId}`)
+}

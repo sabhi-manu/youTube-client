@@ -9,6 +9,7 @@ import { AiFillLike } from "react-icons/ai";
 import {
   createCommentApi,
   getCommentApi,
+  toggleVideoLikeApi,
 } from "../api/commentApi/getCommentApi";
 
 const PlayingVideo = () => {
@@ -58,6 +59,30 @@ const PlayingVideo = () => {
     }
   };
 
+  const handleToggleLike = async () => {
+    if (!video?._id) return;
+
+    try {
+      const response = await toggleVideoLikeApi(video._id);
+      const { liked } = response.data;
+
+      setVideo((prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          isLikedByCurrentUser: liked,
+          likesCount: liked
+            ? prev.likesCount + 1
+            : Math.max(prev.likesCount - 1, 0),
+        };
+      });
+    } catch (error) {
+      console.error("toggle like failed", error);
+    }
+  };
+
+
   return (
     <div className="flex justify-center mt-8 flex-col lg:flex-row">
       {/* LEFT */}
@@ -90,13 +115,13 @@ const PlayingVideo = () => {
         </Link>
 
         <div className="mt-4 flex items-center gap-2 text-sm font-medium text-gray-700">
-          <button className="flex items-center gap-1 px-3 py-1 rounded-full hover:bg-gray-200 transition">
+          <button className="flex items-center gap-1 px-3 py-1 rounded-full hover:bg-gray-200 transition" onClick={handleToggleLike}>
             {video?.isLikedByCurrentUser ? (
               <AiFillLike className="text-blue-600 text-lg" />
             ) : (
               <AiOutlineLike className="text-lg" />
             )}
-            <span>{video?.likesCount}</span>
+            <span>{video?.likesCount} like</span>
           </button>
         </div>
         <div>

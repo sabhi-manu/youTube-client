@@ -9,12 +9,12 @@ import TimeAgo from "../loader/TimeAgo";
 function SuggestedVideo({ video }) {
   // console.log(video);
   return (
-    <div>
+    <div className="mb-5">
       <Link to={`/video/${video?._id}`}>
         <div className="flex mb-3 ">
           <div className="relative h-24 lg:h-20 xl:h-24 w-40 min-w-[168px] lg:w-32 lg:min-w-[128px] xl:w-40 xl:min-w-[168px] rounded-xl hover:rounded-none duration-200">
             <img
-              className="h-full w-full rounded-lg"
+              className="h-full w-full object-cover rounded-lg"
               src={video?.thumbnail}
             />
             {video?.duration && <Time time={video?.duration} />}

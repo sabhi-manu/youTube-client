@@ -1,74 +1,106 @@
-import React from "react";
-import { GiHamburgerMenu } from "react-icons/gi";
+import React, { useContext, useState } from "react";
 import logo from "../../public/logo.png";
 import { CiSearch } from "react-icons/ci";
-import { FaMicrophone } from "react-icons/fa";
-import { CiVideoOn } from "react-icons/ci";
-import { CiBellOn } from "react-icons/ci";
-import { useSelector } from "react-redux";
+import { FiLogOut, FiUser } from "react-icons/fi";
+import { useSelector, useDispatch } from "react-redux";
+import { SearchContext } from "../context/SearchContext";
+import { NavLink, useNavigate } from "react-router";
+import { logoutUser } from "../features/authSlice";
+import { logoutApi } from "../api/auth.api";
+import { toast } from "react-toastify";
+
 
 const NavBar = () => {
-    const {user}= useSelector((state)=>state.auth)
-    console.log("user detatis in nav bar ==>",user)
-    // let user = "";
-    return (
-        <div className="flex justify-between items-center gap-3  px-6 py-3 bg-white fixed w-full top-0 relative z-10 " >
-            {/* logo part */}
-            <div className=" flex justify-between items-center gap-x-2">
-                {/* <GiHamburgerMenu className="cursor-pointer  " size={22} /> */}
-                <img
-                    className="h-10 cursor-pointer  "
-                    src={logo}
-                    alt="youtube logo"
-                />
-            </div>
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { searchText, setSearchText } = useContext(SearchContext);
 
-            {/* search part */}
-            <div className=" flex items-center px-2 gap-3">
-                <div className="flex items-center border border-gray-300 rounded-full overflow-hidden  bg-white">
-                    <input
-                        type="search"
-                        name="search"
-                        id="search"
-                        placeholder="Search"
-                        className="flex-1 px-4 py-2 outline-none text-sm"
-                    />
-                    <button className="px-5 py-2 border-l border-gray-300 bg-gray-100 hover:bg-gray-200">
-                        <CiSearch size={22} />
-                    </button>
-                </div>
-                <button className="p-3 rounded-full bg-gray-100 hover:bg-gray-200">
-                    <FaMicrophone size={18} />
-                </button>
-            </div>
+  const [open, setOpen] = useState(false);
 
-                {/* profile */}
+  const firstLetter = user?.userName?.charAt(0)?.toUpperCase();
 
-            <div className="flex items-center gap-2">
-                <button className="p-2 rounded-full hover:bg-gray-100 transition">
-                    <CiVideoOn size={22} />
-                </button>
+  const handleLogout = async () => {
+   try {
+        await logoutApi(); 
+        toast.success("user logout successfully.")
+      } catch (err) {
+        console.log("logout api failed");
+      } finally {
+        dispatch(logoutUser());
+        navigate("/login");
+      }
+  };
 
-                <button className="p-2 rounded-full hover:bg-gray-100 transition relative">
-                    <CiBellOn size={22} />
-                </button>
+  return (
+     <div className="flex justify-between items-center gap-3  px-6 py-3 bg-white fixed w-full top-0 relative z-10 " >
+        
 
-                <div className="cursor-pointer">
-                    {user?.avatar ? (
-                        <img
-                            src={user.avatar}
-                            alt="profile"
-                            className="w-9 h-9 rounded-full object-cover hover:ring-2 hover:ring-gray-300 transition"
-                        />
-                    ) : (
-                        <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-semibold">
-                            M
-                        </div>
-                    )}
-                </div>
-            </div>
+      {/* LOGO */}
+      <div onClick={() => navigate("/")} className="cursor-pointer">
+        <img src={logo} alt="logo" className="h-9" />
+      </div>
+
+      {/* SEARCH (desktop only) */}
+      <div className="hidden md:flex items-center gap-3">
+        <div className="flex items-center border border-gray-300 rounded-full overflow-hidden">
+          <input
+            type="search"
+            placeholder="Search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onFocus={() => navigate("/search")}
+            className="px-4 py-2 outline-none text-sm w-64"
+          />
+          <button className="px-4 bg-gray-100 hover:bg-gray-200">
+            <CiSearch size={22} />
+          </button>
         </div>
-    );
+      </div>
+
+      {/* USER (mobile + desktop) */}
+      <div className="relative">
+        <div
+          onClick={() => setOpen(!open)}
+          className="cursor-pointer"
+        >
+          {user?.avatar ? (
+            <img
+              src={user.avatar}
+              alt="profile"
+              className="w-9 h-9 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-semibold">
+              {firstLetter}
+            </div>
+          )}
+        </div>
+
+        {/* MOBILE DROPDOWN */}
+        {open && (
+          <div className="absolute right-0 mt-3 w-40 bg-white border rounded-lg shadow-md ">
+            <NavLink
+              to={`/profile/${user?.userName}/${user?._id}`}
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm"
+              onClick={() => setOpen(false)}
+            >
+              <FiUser />
+              Profile
+            </NavLink>
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 w-full hover:bg-red-50 text-red-600 text-sm"
+            >
+              <FiLogOut />
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default NavBar;

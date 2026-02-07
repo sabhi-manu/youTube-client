@@ -1,218 +1,105 @@
-import React from 'react'
+import { NavLink, useNavigate } from "react-router";
 import { GoHome } from "react-icons/go";
-import { SiYoutubeshorts } from "react-icons/si";
-import { MdOutlineSubscriptions, MdHistory } from "react-icons/md";
-import { PiUserSquareThin } from "react-icons/pi";
-import { IoGameControllerOutline } from "react-icons/io5";
+import { MdDashboard, MdHistory } from "react-icons/md";
 import { AiOutlineLike } from "react-icons/ai";
-import { FaChevronRight } from "react-icons/fa6";
-import { FaYoutube } from "react-icons/fa";
-import { SiYoutubestudio } from "react-icons/si";
-import { SiYoutubekids } from "react-icons/si";
-import { MdOutlineWatchLater } from "react-icons/md";
-import { SiYoutubemusic } from "react-icons/si";
-import { SiTrendmicro } from "react-icons/si";
-import { HiOutlineShoppingBag } from "react-icons/hi2";
-import { PiFilmSlateLight } from "react-icons/pi";
-import { CgMediaLive } from "react-icons/cg";
-import { SiYoutubegaming } from "react-icons/si";
-import { FaRegNewspaper } from "react-icons/fa";
-import { TfiCup } from "react-icons/tfi";
-import { PiLightbulbLight } from "react-icons/pi";
-import { SiStylelint } from "react-icons/si";
-import { MdPodcasts } from "react-icons/md";
-import { BiVideo } from "react-icons/bi";
-import { GiLinkedRings } from "react-icons/gi";
+import { PiUserSquareThin } from "react-icons/pi";
+import { IoSearchOutline } from "react-icons/io5";
+import { FiInfo, FiLogOut } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutApi } from "../api/auth.api";
+import { toast } from "react-toastify";
+import { logoutUser } from "../features/authSlice";
 
 const SideBar = () => {
+  const { user } = useSelector((state) => state.auth);
+  console.log("check the user in side bar ==>", user)
+  const navItemClass = ({ isActive }) =>
+    `flex items-center gap-4 px-4 py-2 rounded-xl transition
+     ${isActive ? "bg-gray-300 font-semibold" : "hover:bg-gray-200"}`;
 
-    const sidebarItems = [
-    {
-      id: 1,
-      name: "Home",
-      icon: <GoHome />,
-    },
-    {
-      id: 2,
-      name: "Shorts",
-      icon: <SiYoutubeshorts />,
-    },
-    {
-      id: 3,
-      name: "Subscriptions",
-      icon: <MdOutlineSubscriptions />,
-    },
-  ];
-  const sidebarItems2 = [
-    {
-      id: 1,
-      name: "Your Channel",
-      icon: <PiUserSquareThin />,
-    },
-    {
-      id: 2,
-      name: "History",
-      icon: <MdHistory />,
-    },
-    {
-      id: 3,
-      name: "Playlists",
-      icon: <MdOutlineSubscriptions />,
-    },
-    {
-      id: 4,
-      name: "Your Videos",
-      icon: <BiVideo />,
-    },
-    {
-      id: 5,
-      name: "Watch later",
-      icon: <MdOutlineWatchLater />,
-    },
-    {
-      id: 6,
-      name: "Liked videos",
-      icon: <AiOutlineLike />,
-    },
-  ];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const sidebarItems3 = [
-    {
-      id: 1,
-      name: "Trending",
-      icon: <SiTrendmicro />,
-    },
-    {
-      id: 2,
-      name: "Shopping",
-      icon: <HiOutlineShoppingBag />,
-    },
-    {
-      id: 3,
-      name: "Music",
-      icon: <SiYoutubemusic />,
-    },
-    {
-      id: 4,
-      name: "Films",
-      icon: <PiFilmSlateLight />,
-    },
-    {
-      id: 5,
-      name: "Live",
-      icon: <CgMediaLive />,
-    },
-    {
-      id: 6,
-      name: "Gaming",
-      icon: <IoGameControllerOutline />,
-    },
-    {
-      id: 7,
-      name: "News",
-      icon: <FaRegNewspaper />,
-    },
-    {
-      id: 8,
-      name: "Sport",
-      icon: <TfiCup />,
-    },
-    {
-      id: 9,
-      name: "Courses",
-      icon: <SiStylelint />,
-    },
-    {
-      id: 10,
-      name: "Fashion & beauty",
-      icon: <PiLightbulbLight />,
-    },
-    {
-      id: 11,
-      name: "Padcasts",
-      icon: <MdPodcasts />,
-    },
-  ];
-  const sidebarItems4 = [
-    {
-      id: 1,
-      name: "Youtube Premium",
-      icon: <FaYoutube />,
-    },
-    {
-      id: 2,
-      name: "Youtube Studio",
-      icon: <SiYoutubestudio />,
-    },
-    {
-      id: 3,
-      name: "Youtube Music",
-      icon: <SiYoutubemusic />,
-    },
-    {
-      id: 4,
-      name: "Youtube Kids",
-      icon: <SiYoutubekids />,
-    },
-  ];
+  const handleLogout = async () => {
+    try {
+      await logoutApi(); 
+      toast.success("user logout successfully.")
+    } catch (err) {
+      console.log("logout api failed");
+    } finally {
+      dispatch(logoutUser());
+      navigate("/login");
+    }
+  };
+
 
   return (
-    <div className="w-64 h-screen overflow-y-scroll overflow-x-hidden  px-2 py-4  ">
-      {/* home part */}
-      {sidebarItems.map((item)=>{
-        return  <div key={item.id} className="flex items-center gap-4 px-4 py-2 rounded-xl hover:bg-gray-300 cursor-pointer transition duration-200">
-        
-        <div className=''>{item.icon} </div>
-        <span className="text-sm font-medium">{item.name}</span>
-      </div>
-      })}
-     <hr className='mt-2' />
-   {/* you part */}
-          <div className='font-bold mt-2 mb-1  ml-2 '>You</div>
-          {sidebarItems2.map((item)=>{
-        return  <div key={item.id} className="flex items-center gap-4 px-4 py-2 rounded-xl hover:bg-gray-300 cursor-pointer transition duration-200">
-        
-        <div className=''>{item.icon} </div>
-        <span className="text-sm font-medium">{item.name}</span>
-      </div>
-      })}
-      <hr className='mt-2' />
-   {/* explor part */}
-          <div className='font-bold mt-2 mb-1  ml-2 '>Explor</div>
-          {sidebarItems3.map((item)=>{
-        return  <div key={item.id} className="flex items-center gap-4 px-4 py-2 rounded-xl hover:bg-gray-300 cursor-pointer transition duration-200">
-        
-        <div className=''>{item.icon} </div>
-        <span className="text-sm font-medium">{item.name}</span>
-      </div>
-      })}
-   <hr className='mt-2' />
-   {/* you part */}
-          <div className='font-bold mt-2 mb-1 ml-2'>More From YouTub</div>
-          {sidebarItems4.map((item)=>{
-        return  <div key={item.id} className="flex items-center gap-4 px-4 py-2 rounded-xl hover:bg-gray-300 cursor-pointer transition duration-200">
-        
-        <div>{item.icon} </div>
-        <span className="text-sm font-medium">{item.name}</span>
-        
-      </div>
-      
-      })}
-       <hr className='mt-3' />
+    <div className="w-64 h-screen px-2 py-4 overflow-y-auto">
 
-      <br />
-       <span  className="text-xs text-gray-600 font-semibold">
-        About Press Copyright <br /> Contact us Creators <br /> Advertise
-        Developers <br />
-        <p className="mt-3">Terms Privacy Policy & Safety</p> How YouTube works{" "}
-        <br /> Test new features
-      </span>
-      <br />
-      <p className="text-xs text-gray-500 mt-3">© 2026 Learn Coding</p>
-    
-     
+      {/* MAIN */}
+      <NavLink to="/" className={navItemClass}>
+        <GoHome size={20} />
+        <span>Home</span>
+      </NavLink>
+
+      <NavLink to="/dashboard" className={navItemClass}>
+        <MdDashboard size={20} />
+        <span>Dashboard</span>
+      </NavLink>
+
+      <NavLink to="/search" className={navItemClass}>
+        <IoSearchOutline size={20} />
+        <span>Search</span>
+      </NavLink>
+
+      <hr className="my-3" />
+
+      {/* YOU */}
+      <h4 className="text-sm font-semibold ml-4 mb-1">You</h4>
+
+      {user && (
+        <NavLink
+          to={`/profile/${user?.userName}/${user._id}`}
+          className={navItemClass}
+        >
+          <PiUserSquareThin size={20} />
+          <span>Your Channel</span>
+        </NavLink>
+      )}
+
+      <NavLink to="/history" className={navItemClass}>
+        <MdHistory size={20} />
+        <span>History</span>
+      </NavLink>
+
+      <NavLink to="/like/video" className={navItemClass}>
+        <AiOutlineLike size={20} />
+        <span>Liked Videos</span>
+      </NavLink>
+
+      <hr className="my-3" />
+
+      {/* INFO */}
+      <NavLink to="/about" className={navItemClass}>
+        <FiInfo size={20} />
+        <span>About</span>
+      </NavLink>
+
+
+      <p className="text-xs text-gray-500 mt-6 ml-4">
+        © 2026 Sabhimanu Coding
+      </p>
+      <hr className="my-3" />
+
+      <button
+        onClick={handleLogout}
+        className="flex items-center gap-4 px-4 py-2 w-full rounded-xl hover:bg-red-100 text-red-600 transition"
+      >
+        <FiLogOut size={20} />
+        <span>Logout</span>
+      </button>
     </div>
-  )
-}
+  );
+};
 
-export default SideBar
+export default SideBar;

@@ -29,7 +29,7 @@ const Home = () => {
           <div className="p-5 text-center text-gray-500">Loading videos...</div>
         ) : (
           <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4  gap-5  p-5 ">
-           {videos?.map((item) => (
+            {videos?.map((item) => (
               <Video key={item._id} video={item} />
             ))}
           </div>

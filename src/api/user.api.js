@@ -20,3 +20,7 @@ export const getUserProfileApi = (username)=>{
     console.log("update cover image details ==>",username)
     return axiosInstance.get(`/user/channel_profile/${username}`)
 }
+
+export const watchHistoryApi = ()=>{
+    return axiosInstance.get("/user/history")
+}

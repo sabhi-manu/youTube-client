@@ -1,94 +1,111 @@
-import React from "react";
-import { FaRegEye } from "react-icons/fa6";
+import React, { useEffect, useState } from "react";
+import { FaRegEye, FaToggleOn, FaToggleOff } from "react-icons/fa6";
 import { IoPersonOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
-import { FaToggleOn } from "react-icons/fa";
-import { FaToggleOff } from "react-icons/fa6";
 import { MdDeleteOutline } from "react-icons/md";
 import { FiEdit2 } from "react-icons/fi";
+import { useSelector } from "react-redux";
 import StatCard from "./StatCard";
+import { userAccountDetailsApi, userAccountVideosApi } from "../api/dashboardApi/dashboardApi";
+import { Link } from "react-router";
+import { deleteVideoApi, toggleVideoPublishApi } from "../api/videoApi/getVideosApi";
+import { toast } from "react-toastify";
 
-export const channelStatsMock = {
-    channelId: "user_123",
-    totalVideos: 128,
-    totalViews: 221234,
-    totalLikes: 63021,
-    totalSubscribers: 4053,
-    updatedAt: "2026-02-01T10:30:00Z",
-};
-
-export const channelVideosMock = [
-    {
-        _id: "video_01",
-        title: "Card UI + VFX | Magic The Station",
-        thumbnail: "https://picsum.photos/200/120?random=1",
-        status: "Published", // Published | Draft
-        visibility: "Public", // Public | Private | Unlisted
-        views: 98765,
-        likes: 3210,
-        uploadedAt: "2025-12-10T09:30:00Z",
-        duration: 215,
-    },
-    {
-        _id: "video_02",
-        title: "H.E.R – Damage (Official Video)",
-        thumbnail: "https://picsum.photos/200/120?random=2",
-        status: "Published",
-        visibility: "Public",
-        views: 120567,
-        likes: 4578,
-        uploadedAt: "2025-11-28T14:20:00Z",
-        duration: 198,
-    },
-    {
-        _id: "video_03",
-        title: "Queen – Bohemian Rhapsody (Remastered)",
-        thumbnail: "https://picsum.photos/200/120?random=3",
-        status: "Draft",
-        visibility: "Private",
-        views: 0,
-        likes: 0,
-        uploadedAt: "2026-01-02T18:45:00Z",
-        duration: 354,
-    },
-    {
-        _id: "video_04",
-        title: "BRBNS – Midsummer Madness",
-        thumbnail: "https://picsum.photos/200/120?random=4",
-        status: "Published",
-        visibility: "Public",
-        views: 45789,
-        likes: 2104,
-        uploadedAt: "2025-10-15T11:00:00Z",
-        duration: 276,
-    },
-    {
-        _id: "video_05",
-        title: "Ariana Grande – positions",
-        thumbnail: "https://picsum.photos/200/120?random=5",
-        status: "Published",
-        visibility: "Unlisted",
-        views: 87543,
-        likes: 3890,
-        uploadedAt: "2025-09-05T08:10:00Z",
-        duration: 202,
-    },
-];
 
 const Dashboard = () => {
-    return (
-      <div className="p-6 text-white">
+  const { user } = useSelector((state) => state.auth);
+  console.log(user)
+  const [stats, setStats] = useState(null);
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user?._id) return;
+    const fetchDashboardData = async () => {
+      try {
+        const [statsRes, videosRes] = await Promise.all([
+          userAccountDetailsApi(user?._id),
+          userAccountVideosApi(user?._id),
+        ]);
+
+        setStats(statsRes.data.data);
+        setVideos(videosRes.data.data);
+      } catch (error) {
+        console.error("Dashboard fetch failed", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [user]);
+
+  const handleTogglePublish = async (videoId) => {
+    try {
+      await toggleVideoPublishApi(videoId);
+      toast.success("status change.")
+      // update UI instantly (no refetch needed)
+      setVideos((prev) =>
+        prev.map((video) =>
+          video._id === videoId
+            ? { ...video, isPublished: !video.isPublished }
+            : video
+        )
+      );
+    } catch (error) {
+      console.error("Toggle publish failed", error);
+      toast.error("server error.")
+    }
+  };
+
+  const handleDeleteVideo = async (videoId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this video?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const response = await deleteVideoApi(videoId);
+      console.log("delete video response ==>", response)
+      toast.success("video delete successfully.")
+      setVideos((prev) => prev.filter((v) => v._id !== videoId));
+    } catch (error) {
+      console.error("Delete failed", error);
+      toast.error("internal server error.")
+    }
+  };
+
+
+
+  if (loading) {
+    return <p className="p-6 text-gray-400">Loading dashboard...</p>;
+  }
+
+  return (
+    <div className="p-6 text-white">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-semibold text-black">Welcome back, Manu 👋</h2>
+          <h2 className="text-xl font-semibold text-black">
+            Welcome back, {user?.fullName || "Creator"} 👋
+          </h2>
           <p className="text-sm text-black">
             Track, manage and forecast your channel performance
           </p>
         </div>
-        <button className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md">
-          + Upload Video
-        </button>
+       <div className="flex gap-5">
+         <Link to={"/"}>
+          <button className="bg-red-400 hover:bg-red-700 px-4 py-2 rounded-md">
+            Home
+          </button>
+        </Link>
+         <Link to={"/video/upload"}>
+          <button className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md">
+            + Upload Video
+          </button>
+        </Link>
+       </div>
       </div>
 
       {/* STATS */}
@@ -96,17 +113,17 @@ const Dashboard = () => {
         <StatCard
           icon={<FaRegEye />}
           label="Total Views"
-          value={channelStatsMock.totalViews}
+          value={stats.totalViews}
         />
         <StatCard
           icon={<IoPersonOutline />}
           label="Subscribers"
-          value={channelStatsMock.totalSubscribers}
+          value={stats.totalSubscribers}
         />
         <StatCard
           icon={<FaRegHeart />}
           label="Total Likes"
-          value={channelStatsMock.totalLikes}
+          value={stats.totalLikes}
         />
       </div>
 
@@ -123,14 +140,17 @@ const Dashboard = () => {
 
         {/* TABLE BODY */}
         <div className="max-h-[420px] overflow-y-auto">
-          {channelVideosMock.map((item) => (
+          {videos.map((item) => (
             <div
               key={item._id}
               className="grid grid-cols-[80px_2fr_1fr_1fr_2fr] px-4 py-4 items-center border-b border-gray-800 hover:bg-[#1a1a1a]"
             >
-              {/* TOGGLE */}
-              <div>
-                {item.visibility === "Public" ? (
+              {/* STATUS */}
+              <div
+                className="cursor-pointer"
+                onClick={() => handleTogglePublish(item._id)}
+              >
+                {item.isPublished ? (
                   <FaToggleOn className="text-purple-500 text-xl" />
                 ) : (
                   <FaToggleOff className="text-gray-500 text-xl" />
@@ -142,7 +162,7 @@ const Dashboard = () => {
                 <img
                   src={item.thumbnail}
                   className="w-16 h-10 object-cover rounded"
-                  alt=""
+                  alt={item.title}
                 />
                 <p className="text-sm line-clamp-2">{item.title}</p>
               </div>
@@ -150,38 +170,43 @@ const Dashboard = () => {
               {/* VISIBILITY */}
               <div className="text-sm">
                 <span
-                  className={`px-2 py-1 rounded text-xs ${
-                    item.visibility === "Public"
-                      ? "bg-green-600/20 text-green-400"
-                      : "bg-gray-600/20 text-gray-300"
-                  }`}
+                  className={`px-2 py-1 rounded text-xs ${item.isPublished
+                    ? "bg-green-600/20 text-green-400"
+                    : "bg-gray-600/20 text-gray-300"
+                    }`}
                 >
-                  {item.visibility}
+                  {item.isPublished ? "Published" : "Unpublished"}
                 </span>
               </div>
 
               {/* STATS */}
               <div className="text-sm text-gray-300">
-                <p>{item.views.toLocaleString()} views</p>
-                <p>{item.likes.toLocaleString()} likes</p>
+                <p>{item?.views?.toLocaleString()} views</p>
+                <p>{item?.likes?.toLocaleString()} likes</p>
               </div>
 
               {/* DATE + ACTIONS */}
               <div className="flex justify-between items-center text-sm text-gray-400">
                 <span>
-                  {new Date(item.uploadedAt).toLocaleDateString()}
+                  {new Date(item.createdAt).toLocaleDateString()}
                 </span>
                 <div className="flex gap-3 text-lg">
-                  <FiEdit2 className="hover:text-purple-400 cursor-pointer" />
-                  <MdDeleteOutline className="hover:text-red-500 cursor-pointer" />
+                  {/* <FiEdit2 className="hover:text-purple-400 cursor-pointer" /> */}
+                  <MdDeleteOutline className="hover:text-red-500 cursor-pointer" onClick={() => handleDeleteVideo(item._id)} />
                 </div>
               </div>
             </div>
           ))}
+
+          {videos.length === 0 && (
+            <p className="p-6 text-center text-gray-500">
+              No videos uploaded yet
+            </p>
+          )}
         </div>
       </div>
     </div>
-    );
+  );
 };
 
 export default Dashboard;

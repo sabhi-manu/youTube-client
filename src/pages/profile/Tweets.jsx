@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
-import { getUserTweetsApi, createTweetApi } from "../../api/tweetsApi/tweetsApi";
+import { getUserTweetsApi, createTweetApi, tweetToggleApi } from "../../api/tweetsApi/tweetsApi";
 import { useParams } from "react-router";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -61,6 +61,30 @@ console.log('check the owner profile==>',isOwnProfile)
     }
   };
 
+  const tweetToggleHandler = async (tweetId)=>{
+    try {
+      const response = await tweetToggleApi(tweetId);
+
+    const isLiked = response.data.liked;
+
+    setTweets((prevTweets) =>
+      prevTweets.map((tweet) =>
+        tweet._id === tweetId
+          ? {
+              ...tweet,
+              isLiked,
+              likeCount: isLiked
+                ? tweet.likeCount + 1
+                : tweet.likeCount - 1,
+            }
+          : tweet
+      )
+    );
+    } catch (error) {
+      console.log("server error.")
+    }
+  }
+console.log("tweet array ==>",tweets)
   // 🔹 States
   if (isLoading) {
     return <div className="p-4 text-center">Loading tweets...</div>;
@@ -129,7 +153,9 @@ console.log('check the owner profile==>',isOwnProfile)
                 <p className="mt-1 text-gray-800">{tweet.content}</p>
 
                 {/* Likes (UI only for now) */}
-                <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                <div className="mt-2 flex items-center gap-2 text-sm text-gray-600"
+                onClick={()=>tweetToggleHandler(tweet._id)}
+                >
                   {tweet.isLiked ? (
                     <AiFillLike />
                   ) : (

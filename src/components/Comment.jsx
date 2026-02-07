@@ -1,17 +1,12 @@
 
-import { BsFillCheckCircleFill } from "react-icons/bs";
 import TimeAgo from "../loader/TimeAgo";
 
 
 
-const Comment = ({comment,videoId}) => {
-  console.log("comment data ==>",comment,videoId)
- 
-
-  
-
+const Comment = ({ comment, videoId }) => {
+  // console.log("comment data ==>", comment, videoId)
   return (
-      <div className="flex gap-3 mt-4">
+    <div className="flex gap-3 mt-4">
       <img
         src={comment?.owner.avatar}
         className="w-9 h-9 rounded-full"

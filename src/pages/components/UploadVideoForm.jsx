@@ -1,4 +1,6 @@
 import { useForm } from "react-hook-form";
+import { Link } from "react-router";
+import { uploadVideoApi } from "../../api/videoApi/getVideosApi";
 
 const UploadVideoForm = () => {
   const {
@@ -17,10 +19,8 @@ const UploadVideoForm = () => {
       formData.append("title", data.title);
       formData.append("description", data.description);
 
-      // 🔹 API call
-      // await api.post("/videos/upload", formData);
-
-      console.log("Uploading data:", data);
+      const response = await uploadVideoApi(formData)
+      console.log("video upload  data: ==>", response);
 
       alert("Video uploaded successfully!");
       reset();
@@ -33,6 +33,7 @@ const UploadVideoForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
+       encType="multipart/form-data"
       className="max-w-3xl mx-auto bg-black border border-gray-700 p-6 rounded-lg "
     >
       <h2 className="text-xl font-semibold mb-4">Upload Videos</h2>
@@ -125,14 +126,16 @@ const UploadVideoForm = () => {
 
       {/* Action */}
       <div className="flex justify-around">
+       <Link to={"/"}>
         <button
-          type="submit"
-          disabled={isSubmitting}
+          type="button"
+         
           className="px-6 py-2 bg-purple-600 rounded text-white
             hover:bg-purple-700 disabled:opacity-50"
         >
           Home
         </button>
+       </Link>
      
         <button
           type="submit"
@@ -140,7 +143,7 @@ const UploadVideoForm = () => {
           className="px-6 py-2 bg-purple-600 rounded text-white
             hover:bg-purple-700 disabled:opacity-50"
         >
-          {isSubmitting ? "Uploading..." : "Save"}
+          {isSubmitting ? "Uploading..." : "Upload"}
         </button>
       </div>
     </form>

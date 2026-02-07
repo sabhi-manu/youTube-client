@@ -6,7 +6,10 @@ export const getUserTweetsApi = (userId)=>{
 }
 
 
-// api/tweetsApi/tweetsApi.js
 export const createTweetApi = (data) => {
   return axiosInstance.post("/tweet", data);
 };
+
+export const tweetToggleApi = (tweetId)=>{
+  return axiosInstance.post(`/like/toggle/t/${tweetId}`)
+}

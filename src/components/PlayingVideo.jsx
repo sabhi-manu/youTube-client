@@ -88,13 +88,14 @@ const PlayingVideo = () => {
       {/* LEFT */}
       <div className="w-full max-w-[1000px] px-4">
         <div className="h-[200px] md:h-[400px]">
-          <ReactPlayer
-            url={video?.videoFile}
-            height="100%"
-            width="100%"
+          <video
+            src={video?.videoFile}
+            autoPlay
             controls
-            playing
+            className="w-full h-full"
+             key={video?._id}
           />
+
         </div>
 
         <p className="mt-3 text-sm text-gray-500">{video?.views} views</p>

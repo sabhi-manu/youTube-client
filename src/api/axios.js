@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const apiInstance = axios.create({
-    baseURL:"http://localhost:8000/api",
+    baseURL:"https://youtube-backend-qzfq.onrender.com/api",
     withCredentials:true
 })
 

@@ -34,13 +34,34 @@ const Login = () => {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setLoading(true);
+    try {
+      const demoData = {
+        email: "example@gmail.com",
+        password: "123",
+        userName: "example",
+      };
+
+      const response = await loginApi(demoData);
+
+      dispatch(loginUser(response.data.data));
+      toast.success("Demo login successful 🎉");
+      navigate("/");
+    } catch (error) {
+      toast.error("Demo login failed ❌");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex">
       {/* Form Section */}
       <div className="w-full md:w-1/2 flex flex-col justify-center px-10">
         {/* Heading */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">Welcome Back 👋</h1>
+          <h1 className="text-3xl font-bold">Welcome Back </h1>
           <p className="text-gray-500 mt-2">
             Login to manage your channel and videos
           </p>
@@ -113,6 +134,14 @@ const Login = () => {
                                 }`}
           >
             {loading ? "Logging in..." : "Login"}
+          </button>
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={loading}
+            className="py-2 rounded mt-2 text-purple-700 border border-purple-600 hover:bg-purple-50 transition"
+          >
+            Login as Guest (Demo)
           </button>
 
           {/* Footer */}

@@ -8,8 +8,10 @@ import { useSelector } from "react-redux";
 import StatCard from "./StatCard";
 import { userAccountDetailsApi, userAccountVideosApi } from "../api/dashboardApi/dashboardApi";
 import { Link } from "react-router";
-import { deleteVideoApi, toggleVideoPublishApi } from "../api/videoApi/getVideosApi";
+import { deleteVideoApi, getUserVideo, toggleVideoPublishApi } from "../api/videoApi/getVideosApi";
 import { toast } from "react-toastify";
+import DashboardSkeleton from "../skeletons/DashboardSkeleton";
+import ErrorState from "../skeletons/ErrorState";
 
 
 const Dashboard = () => {
@@ -18,20 +20,27 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userVideo,setUserVideo] = useState([])
+  const [error,setError] = useState(null)
 
   useEffect(() => {
     if (!user?._id) return;
     const fetchDashboardData = async () => {
       try {
-        const [statsRes, videosRes] = await Promise.all([
+        setLoading(true);
+      setError(null);
+        const [statsRes, videosRes, userVideoRes] = await Promise.all([
           userAccountDetailsApi(user?._id),
           userAccountVideosApi(user?._id),
+          getUserVideo(user?._id)
         ]);
 
         setStats(statsRes.data.data);
         setVideos(videosRes.data.data);
+        setUserVideo(userVideoRes.data.data)
       } catch (error) {
         console.error("Dashboard fetch failed", error);
+         setError("Failed to load dashboard");
       } finally {
         setLoading(false);
       }
@@ -76,11 +85,22 @@ const Dashboard = () => {
     }
   };
 
+console.log("videos ==>", videos)
+console.log("stats ==>", stats)
+console.log("user video ==>", userVideo)
 
+ if (loading && !stats) {
+  return <DashboardSkeleton />;
+}
 
-  if (loading) {
-    return <p className="p-6 text-gray-400">Loading dashboard...</p>;
-  }
+if (error) {
+  return (
+    <ErrorState
+      message={error}
+      onRetry={() => window.location.reload()}
+    />
+  );
+}
 
   return (
     <div className="p-6 text-white">
@@ -113,17 +133,17 @@ const Dashboard = () => {
         <StatCard
           icon={<FaRegEye />}
           label="Total Views"
-          value={stats.totalViews}
+          value={stats?.totalViews}
         />
         <StatCard
           icon={<IoPersonOutline />}
           label="Subscribers"
-          value={stats.totalSubscribers}
+          value={stats?.totalSubscribers}
         />
         <StatCard
           icon={<FaRegHeart />}
           label="Total Likes"
-          value={stats.totalLikes}
+          value={stats?.totalLikes}
         />
       </div>
 
@@ -140,7 +160,7 @@ const Dashboard = () => {
 
         {/* TABLE BODY */}
         <div className="max-h-[420px] overflow-y-auto">
-          {videos.map((item) => (
+          {userVideo.map((item) => (
             <div
               key={item._id}
               className="grid grid-cols-[80px_2fr_1fr_1fr_2fr] px-4 py-4 items-center border-b border-gray-800 hover:bg-[#1a1a1a]"
@@ -160,9 +180,9 @@ const Dashboard = () => {
               {/* VIDEO */}
               <div className="flex gap-3 items-center">
                 <img
-                  src={item.thumbnail}
+                  src={item?.thumbnail}
                   className="w-16 h-10 object-cover rounded"
-                  alt={item.title}
+                  alt={item?.title}
                 />
                 <p className="text-sm line-clamp-2">{item.title}</p>
               </div>
@@ -175,7 +195,7 @@ const Dashboard = () => {
                     : "bg-gray-600/20 text-gray-300"
                     }`}
                 >
-                  {item.isPublished ? "Published" : "Unpublished"}
+                  {item?.isPublished ? "Published" : "Unpublished"}
                 </span>
               </div>
 
@@ -198,7 +218,7 @@ const Dashboard = () => {
             </div>
           ))}
 
-          {videos.length === 0 && (
+          {userVideo.length === 0 && (
             <p className="p-6 text-center text-gray-500">
               No videos uploaded yet
             </p>

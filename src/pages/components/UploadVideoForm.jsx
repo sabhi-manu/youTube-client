@@ -19,10 +19,14 @@ const UploadVideoForm = () => {
       formData.append("title", data.title);
       formData.append("description", data.description);
 
-      const response = await uploadVideoApi(formData)
-      console.log("video upload  data: ==>", response);
+      const response = await uploadVideoApi(formData);
+      console.log("processing  video upload  data: ==>", response);
+      const video = response.data.data;
 
-      alert("Video uploaded successfully!");
+      console.log("video created:", video);
+
+      localStorage.setItem("processingVideo", JSON.stringify(video));
+      alert("Video processing started!");
       reset();
     } catch (error) {
       console.error(error);
@@ -33,42 +37,26 @@ const UploadVideoForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-       encType="multipart/form-data"
+      encType="multipart/form-data"
       className="max-w-3xl mx-auto bg-black border border-gray-700 p-6 rounded-lg "
     >
       <h2 className="text-xl font-semibold mb-4">Upload Videos</h2>
 
       {/* Video Upload */}
-      <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center mb-6">
+      <div className="mb-4 text-white">
+        <label className="block mb-1 text-sm">Video *</label>
+
         <input
           type="file"
           accept="video/*"
           {...register("video", {
             required: "Video file is required",
           })}
-          className="hidden"
-          id="video-upload"
+          className="border p-2 w-full   rounded"
         />
 
-        <label
-          htmlFor="video-upload"
-          className="cursor-pointer text-purple-400"
-        >
-          Drag & drop video files to upload <br />
-          <span className="text-sm text-gray-400">
-            Your videos will be private until you publish them
-          </span>
-          <div className="mt-3">
-            <span className="px-4 py-2 bg-purple-600 rounded text-white">
-              Select Files
-            </span>
-          </div>
-        </label>
-
         {errors.video && (
-          <p className="text-red-500 text-sm mt-2">
-            {errors.video.message}
-          </p>
+          <p className="text-red-500 text-sm mt-1">{errors.video.message}</p>
         )}
       </div>
 
@@ -84,9 +72,7 @@ const UploadVideoForm = () => {
           className="border p-2 w-full"
         />
         {errors.thumbnail && (
-          <p className="text-red-500 text-sm">
-            {errors.thumbnail.message}
-          </p>
+          <p className="text-red-500 text-sm">{errors.thumbnail.message}</p>
         )}
       </div>
 
@@ -94,7 +80,7 @@ const UploadVideoForm = () => {
       <div className="mb-4 text-white">
         <label className="block mb-1 text-sm">Title *</label>
         <input
-        placeholder="Title .."
+          placeholder="Title .."
           type="text"
           {...register("title", {
             required: "Title is required",
@@ -102,14 +88,11 @@ const UploadVideoForm = () => {
               value: 3,
               message: "Title must be at least 3 characters",
             },
-            
           })}
           className="border p-2 w-full"
         />
         {errors.title && (
-          <p className="text-red-500 text-sm">
-            {errors.title.message}
-          </p>
+          <p className="text-red-500 text-sm">{errors.title.message}</p>
         )}
       </div>
 
@@ -117,7 +100,7 @@ const UploadVideoForm = () => {
       <div className="mb-6 text-white">
         <label className="block mb-1 text-sm">Description</label>
         <textarea
-        placeholder="Description....."
+          placeholder="Description....."
           rows="3"
           {...register("description")}
           className="border p-2 w-full"
@@ -126,17 +109,16 @@ const UploadVideoForm = () => {
 
       {/* Action */}
       <div className="flex justify-around">
-       <Link to={"/"}>
-        <button
-          type="button"
-         
-          className="px-6 py-2 bg-purple-600 rounded text-white
+        <Link to={"/"}>
+          <button
+            type="button"
+            className="px-6 py-2 bg-purple-600 rounded text-white
             hover:bg-purple-700 disabled:opacity-50"
-        >
-          Home
-        </button>
-       </Link>
-     
+          >
+            Home
+          </button>
+        </Link>
+
         <button
           type="submit"
           disabled={isSubmitting}

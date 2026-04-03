@@ -18,7 +18,7 @@ const ProfileLayout = () => {
     const fetchProfile = async () => {
       const response = await getUserProfileApi(username);
       console.log("user profile response data ==>",response)
-      setProfile(response.data.data);
+      setProfile(response.data);
       setLoading(false);
     };
     fetchProfile();

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getLikeVideoApi } from '../api/videoApi/getVideosApi'
+import SearchVideoSkeleton from '../skeletons/SearchVideoSkeleton'
 
 const LikeVideo = () => {
     const [videos,setVideos] = useState([])
@@ -23,7 +24,11 @@ const LikeVideo = () => {
     },[])
 
      if (loading) {
-    return <p className="text-center mt-10">Loading Like videos....</p>;
+    return <p className="text-center mt-10">
+      {
+        Array(10).fill(0).map((_,index) => <SearchVideoSkeleton key={index}/>)
+      }
+    </p>;
   }
 
      if (!videos.length) {

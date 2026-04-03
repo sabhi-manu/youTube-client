@@ -36,7 +36,7 @@ const ProfileHeader = ({ profile, setProfile, isOwner,userId }) => {
       {/* Cover */}
       <div className="h-[280px] w-full relative">
         <img
-          src={profile.coverImage}
+          src={profile?.coverImage}
           alt="cover"
           className="h-full w-full object-cover"
         />
@@ -59,7 +59,7 @@ const ProfileHeader = ({ profile, setProfile, isOwner,userId }) => {
           {/* Avatar */}
           <div className="relative w-32 h-32">
             <img
-              src={profile.avatar}
+              src={profile?.avatar}
               alt="profile"
               className="w-32 h-32 rounded-full border-4 border-black object-cover"
             />
@@ -75,13 +75,13 @@ const ProfileHeader = ({ profile, setProfile, isOwner,userId }) => {
           </div>
           {/* Info */}
           <div className="flex-1">
-            <h1 className="text-2xl font-semibold">{profile.fullName}</h1>
-            <p className="text-gray-400 text-sm">@{profile.userName}</p>
+            <h1 className="text-2xl font-semibold">{profile?.fullName}</h1>
+            <p className="text-gray-400 text-sm">@{profile?.userName}</p>
 
             <p className="text-gray-400 mt-1">
-              {profile.subscribersCount.toLocaleString()} subscribers
+              {profile?.subscribersCount?.toLocaleString()} subscribers
               <span className="mx-2">•</span>
-              {profile.subscribeToCount} subscribed
+              {profile?.subscribeToCount} subscribed
             </p>
           </div>
 
@@ -122,7 +122,7 @@ const ProfileHeader = ({ profile, setProfile, isOwner,userId }) => {
             ) : (
               <button
                 className={`px-5 py-2 rounded font-medium transition ${
-                  profile.isSubscribe
+                  profile?.isSubscribe
                     ? "bg-gray-300 text-black hover:bg-gray-400"
                     : "bg-red-600 text-white hover:bg-red-700"
                 }`}
@@ -133,7 +133,7 @@ const ProfileHeader = ({ profile, setProfile, isOwner,userId }) => {
                   );
                 }}
               >
-                {profile.isSubscribe ? "Unsubscribe" : "Subscribe"}
+                {profile?.isSubscribe ? "Unsubscribe" : "Subscribe"}
               </button>
             )}
           </div>

@@ -10,7 +10,9 @@ export const getVideoById = (videoId)=>{
 
 export const getUserVideo = (userId)=>{
     console.log("check the user id in api ==>",userId)
-    return axiosInstance.get(`/video/user/${userId}`)
+   let response= axiosInstance.get(`/video/user/${userId}`)
+   console.log("check the response in api ==>",response)
+    return response
 }
 export const uploadVideoApi = (data)=>{
     console.log("check the user id in api ==>",data)

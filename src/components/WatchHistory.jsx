@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { watchHistoryApi } from "../api/user.api";
+import SearchVideoSkeleton from "../skeletons/SearchVideoSkeleton";
 
 export default function WatchHistory() {
   const [history, setHistory] = useState([]);
@@ -21,7 +22,11 @@ export default function WatchHistory() {
   }, []);
 
   if (loading) {
-    return <p className="text-center mt-10">Loading watch history...</p>;
+    return <p className="text-center mt-10">
+      {
+        Array(10).fill(0).map((_,index) => <SearchVideoSkeleton key={index}/>)
+      }
+    </p>;
   }
 
   if (!history.length) {

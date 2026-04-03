@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { getAllVideoApi } from "../api/videoApi/getVideosApi";
 import { SearchContext } from "../context/SearchContext";
+import SearchVideoSkeleton from "../skeletons/SearchVideoSkeleton";
 
 
 const Search = () => {
@@ -34,7 +35,11 @@ const Search = () => {
   return (
     <div className="h-full overflow-y-auto px-6 py-4 ">
       {filteredVideos.length === 0 && (
-        <p className="text-gray-400">No results found</p>
+        <p className="text-gray-400">
+          {
+            Array(10).fill(0).map((_,index) => <SearchVideoSkeleton key={index}/>)
+          }
+        </p>
       )}
 
       <div className="flex flex-col gap-6 h-[calc(100vh-7rem)] overflow-y-scroll overflow-x-hidden">

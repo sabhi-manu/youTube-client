@@ -4,6 +4,7 @@ const initialState = {
   user: null,
   isAuthenticated: false,
   error: null,
+  isLoading:true
 };
 export const authSlice = createSlice({
   name: "auth",
@@ -32,6 +33,9 @@ export const authSlice = createSlice({
     clearAuthError: (state) => {
       state.error = null;
     },
+    setLoading: (state, action) => {
+  state.isLoading = action.payload;
+},
   },
 });
 
@@ -41,5 +45,6 @@ export const {
   updateUser,
   setAuthError,
   clearAuthError,
+  setLoading
 } = authSlice.actions;
 export default authSlice.reducer;

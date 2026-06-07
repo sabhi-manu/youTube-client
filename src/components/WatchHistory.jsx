@@ -10,7 +10,7 @@ export default function WatchHistory() {
     const fetchHistory = async () => {
       try {
         const res = await watchHistoryApi()
-        setHistory(res.data.data);
+        setHistory(res?.data.data);
       } catch (error) {
         console.error("Failed to fetch watch history", error);
       } finally {
@@ -43,8 +43,8 @@ export default function WatchHistory() {
           {/* Left: Thumbnail */}
           <div className="w-64 flex-shrink-0">
             <img
-              src={video.thumbnail}
-              alt={video.title}
+              src={video?.thumbnail}
+              alt={video?.title}
               className="w-full h-36 object-cover rounded"
             />
           </div>
@@ -61,18 +61,18 @@ export default function WatchHistory() {
 
               <div className="flex items-center gap-2 mt-2">
                 <img
-                  src={video.owner.avatar}
-                  alt={video.owner.fullName}
+                  src={video?.owner?.avatar}
+                  alt={video?.owner?.fullName}
                   className="w-6 h-6 rounded-full"
                 />
                 <span className="text-sm text-gray-700">
-                  {video.owner.fullName}
+                  {video?.owner?.fullName}
                 </span>
               </div>
             </div>
 
             <div className="text-xs text-gray-500 mt-2">
-              {video.views} views • {Math.floor(video.duration)} sec
+              {video.views} views • {Math.floor(video?.duration)} sec
             </div>
           </div>
         </div>

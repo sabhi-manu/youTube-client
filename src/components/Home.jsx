@@ -19,7 +19,7 @@ const Home = () => {
     const fetchVideos = async () => {
       try {
         const response = await getAllVideoApi();
-        setVideos(response.data.data);
+        setVideos(response?.data.data);
       } catch (error) {
         console.log("error fetching videos ===>", error);
       } finally {

@@ -16,7 +16,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import UploadVideoForm from "./pages/components/UploadVideoForm";
 import { currentUserApi } from "./api/auth.api";
-import { loginUser } from "./features/authSlice";
+import { loginUser, setLoading } from "./features/authSlice";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import WatchHistory from "./components/WatchHistory";
@@ -37,7 +37,9 @@ const App = () => {
         dispatch(loginUser(res.data.data));
       } catch (err) {
         console.log("user not login.");
-      }
+      } finally {
+      dispatch(setLoading(false));
+    }
     };
 
     getUser();

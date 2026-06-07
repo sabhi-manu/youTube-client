@@ -38,7 +38,7 @@ const Login = () => {
     setLoading(true);
     try {
       const demoData = {
-        email: "example@gmail.com",
+        email: "sabhimanu707@gmail.com",
         password: "123",
         userName: "example",
       };

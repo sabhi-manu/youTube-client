@@ -1,30 +1,64 @@
-import Home from "./components/Home";
-import NavBar from "./components/NavBar";
-import PlayingVideo from "./components/PlayingVideo";
-import Search from "./components/Search";
+import { lazy, Suspense, useEffect } from "react";
 import { Route, Routes } from "react-router";
-import ProfileLayout from "./pages/profile/ProfileLayout";
-import Videos from "./pages/profile/Videos";
-import Playlist from "./pages/profile/Playlist";
-import Following from "./pages/profile/Following";
-import Tweets from "./pages/profile/Tweets";
-import PlayListTab from "./pages/profile/PlayListTab";
-import AppLayout from "./layouts/AppLayout";
-import Dashboard from "./pages/Dashboard";
-import AuthLayout from "./layouts/AuthLayout";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import UploadVideoForm from "./pages/components/UploadVideoForm";
+import { useDispatch } from "react-redux";
+
 import { currentUserApi } from "./api/auth.api";
 import { loginUser, setLoading } from "./features/authSlice";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import WatchHistory from "./components/WatchHistory";
-import LikeVideo from "./components/LikeVideo";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import PublicRoute from "./routes/PublicRoute";
-import About from "./components/About";
+import PageLoader from "./components/PageLoader";
 
+// Components
+const Home = lazy(() => import("./components/Home"));
+const PlayingVideo = lazy(() => import("./components/PlayingVideo"));
+const Search = lazy(() => import("./components/Search"));
+const WatchHistory = lazy(() => import("./components/WatchHistory"));
+const LikeVideo = lazy(() => import("./components/LikeVideo"));
+const About = lazy(() => import("./components/About"));
+
+// Profile Pages
+const ProfileLayout = lazy(() =>
+  import("./pages/profile/ProfileLayout")
+);
+const Videos = lazy(() => import("./pages/profile/Videos"));
+const Playlist = lazy(() => import("./pages/profile/Playlist"));
+const Following = lazy(() =>
+  import("./pages/profile/Following")
+);
+const Tweets = lazy(() => import("./pages/profile/Tweets"));
+const PlayListTab = lazy(() =>
+  import("./pages/profile/PlayListTab")
+);
+
+// Dashboard & Upload
+const Dashboard = lazy(() =>
+  import("./pages/Dashboard")
+);
+const UploadVideoForm = lazy(() =>
+  import("./pages/components/UploadVideoForm")
+);
+
+// Auth Pages
+const Login = lazy(() =>
+  import("./pages/auth/Login")
+);
+const Register = lazy(() =>
+  import("./pages/auth/Register")
+);
+
+// Layouts
+const AppLayout = lazy(() =>
+  import("./layouts/AppLayout")
+);
+const AuthLayout = lazy(() =>
+  import("./layouts/AuthLayout")
+);
+
+// Routes
+const ProtectedRoute = lazy(() =>
+  import("./routes/ProtectedRoute")
+);
+const PublicRoute = lazy(() =>
+  import("./routes/PublicRoute")
+);
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,51 +67,96 @@ const App = () => {
     const getUser = async () => {
       try {
         const res = await currentUserApi();
-        console.log("current user", res);
         dispatch(loginUser(res.data.data));
       } catch (err) {
         console.log("user not login.");
       } finally {
-      dispatch(setLoading(false));
-    }
+        dispatch(setLoading(false));
+      }
     };
 
     getUser();
-  }, []);
+  }, [dispatch]);
+
   return (
     <div>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route element={<ProtectedRoute />}>
+            {/* Without Sidebar */}
+            <Route
+              path="/dashboard"
+              element={<Dashboard />}
+            />
+            <Route
+              path="/video/upload"
+              element={<UploadVideoForm />}
+            />
 
-      <Routes>
-        <Route element={<ProtectedRoute />}>
-          {/* Routes WITHOUT sidebar */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/video/upload" element={<UploadVideoForm />} />
-          {/* Routes WITH sidebar */}
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/playlist/:playlistId" element={<PlayListTab />} />
-            <Route path="/video/:videoId" element={<PlayingVideo />} />
-            <Route path="/history" element={<WatchHistory />} />
-            <Route path="/like/video" element={<LikeVideo />} />
-            <Route path="/about" element={<About/>} />
-            <Route path="/profile/:username/:userId" element={<ProfileLayout />} >
-              <Route index element={<Videos />} />
-              <Route path="videos" element={<Videos />} />
-              <Route path="playlist" element={<Playlist />} />
-              <Route path="tweet" element={<Tweets />} />
-              <Route path="following" element={<Following />} />
+            {/* With Sidebar */}
+            <Route element={<AppLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/search" element={<Search />} />
+              <Route
+                path="/playlist/:playlistId"
+                element={<PlayListTab />}
+              />
+              <Route
+                path="/video/:videoId"
+                element={<PlayingVideo />}
+              />
+              <Route
+                path="/history"
+                element={<WatchHistory />}
+              />
+              <Route
+                path="/like/video"
+                element={<LikeVideo />}
+              />
+              <Route
+                path="/about"
+                element={<About />}
+              />
+
+              <Route
+                path="/profile/:username/:userId"
+                element={<ProfileLayout />}
+              >
+                <Route index element={<Videos />} />
+                <Route
+                  path="videos"
+                  element={<Videos />}
+                />
+                <Route
+                  path="playlist"
+                  element={<Playlist />}
+                />
+                <Route
+                  path="tweet"
+                  element={<Tweets />}
+                />
+                <Route
+                  path="following"
+                  element={<Following />}
+                />
+              </Route>
             </Route>
           </Route>
-        </Route>
-        <Route element={<PublicRoute />}>
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+
+          <Route element={<PublicRoute />}>
+            <Route element={<AuthLayout />}>
+              <Route
+                path="/login"
+                element={<Login />}
+              />
+              <Route
+                path="/register"
+                element={<Register />}
+              />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-   
+        </Routes>
+      </Suspense>
     </div>
   );
 };
